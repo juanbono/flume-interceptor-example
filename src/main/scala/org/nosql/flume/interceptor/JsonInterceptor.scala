@@ -26,12 +26,14 @@ class JsonInterceptor(ctx: Context) extends Interceptor {
   // handles a single tweet
   def intercept(event: Event): Event = {
 
-    val body: String = new String(event.getBody, StandardCharsets.UTF_8)
+    val body = new String(event.getBody, StandardCharsets.UTF_8)
 
     val data = ujson.read(body)
     val text = data("text").str
 
-    if (text.contains("argentina"))
+    val wordToFilter = ctx.getString("json_filter.word")
+
+    if (text.contains(wordToFilter))
       bw.append(text)
 
     event
